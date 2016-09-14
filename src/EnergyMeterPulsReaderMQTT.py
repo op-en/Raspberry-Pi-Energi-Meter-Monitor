@@ -14,11 +14,11 @@ import paho.mqtt.client as mqtt
 
 config = {
     'mqtt_host': os.environ.get('MQTT','localhost'),
-    'mqtt_user': os.environ.get('MQTT_USER','driver'),
-    'mqtt_pass': os.environ.get('MQTT_PASS','1234'),
-    'mqtt_prefix': os.environ.get('MQTT_PREFIX','MainMeter'),
+    'mqtt_user': os.environ.get('MQTT_USER',None),
+    'mqtt_pass': os.environ.get('MQTT_PASS',None),
+    'mqtt_prefix': os.environ.get('MQTT_PREFIX','rpi-emm'),
     'mqtt_client': os.environ.get('MQTT_CLIENT','EnergyLogger'),
-    'pin': int(os.environ.get('EEM_GPIO_PIN',23))
+    'pin': int(os.environ.get('EMM_GPIO_PIN',23))
 }
 
 #Functions

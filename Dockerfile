@@ -2,7 +2,7 @@
 FROM hypriot/rpi-python
 MAINTAINER Leo Fidjeland (hello@leo.wtf)
 
-RUN apt-get install python-rpi.gpio
+#RUN apt-get install python-rpi.gpio
 
 # Upgrade pip
 RUN pip install --upgrade pip
