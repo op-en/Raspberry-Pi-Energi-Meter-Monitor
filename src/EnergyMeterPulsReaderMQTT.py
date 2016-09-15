@@ -135,9 +135,9 @@ class EnergyLogger(mqtt.Client):
             if self.debug:
                 print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,count, pulselenght, bounces ,period,PulseDeviation))
 
-            self.CountEnergy(timestamp,pulselenght,bounces)
+            self.CountEnergy(timestamp,pulselenght,bounces,PulseDeviation)
 
-    def CountEnergy(self,TimeStamp,PulseLenght,Bounces):
+    def CountEnergy(self,TimeStamp,PulseLenght,Bounces,PulseDeviation):
 
 
         if self.LastTime == 0:
