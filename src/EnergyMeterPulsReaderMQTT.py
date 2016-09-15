@@ -139,44 +139,41 @@ class EnergyLogger(mqtt.Client):
 
     def CountEnergy(self,TimeStamp,PulseLenght,Bounces,PulseDeviation):
 
-
+        #Ignore first pulse since period cant be calculated with just one.
         if self.LastTime == 0:
             self.LastTime = TimeStamp
             return
 
-        Period = TimeStamp - self.LastTime
-
-
-        #
+        #Proceed only id pulse legnth is correct.
         if PulseDeviation >  self.pulse_lenght_max_dev:
             print("%.3f Pulselenght error" % TimeStamp)
             return
 
-
+        #Increase counter and calculate period.
         self.EnergyCounter += 1
+        Period = TimeStamp - self.LastTime
 
-        self.LastTime = TimeStamp
-        self.LastPeriod = Period
+        #self.LastPeriod = Period
 
-        #Calculate values.
+        #Calculate power and energy values.
         Energy = self.EnergyCounter * self.Factor
         Power = self.Factor / (Period / 3600000.0) # The energy divided on the time in hours.
         Delta = fabs(Power - self.LastPower)
 
-
+        #Filter exream values
         if Delta > self.error_threshhold:
             print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (timestamp, self.error_threshhold)
             print " "
             return
 
-
         #Store for future reference
+        self.LastTime = TimeStamp
         self.LastPower = Power
         self.LastEnergy = Energy
         self.LastDelta = Delta
 
         if self.debug:
-            print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
+            print "EnergyCounter %i Period is: %.2f s \tPower is: %.2f W\tEnergy: %.2f kWh\tChange: %.2f " % (self.EnergyCounter,Period,Power,Energy,Delta)
 
         if Delta > self.Threshhold:
             self.SendMeterEvent(str(TimeStamp),str(Power),str(Energy),str(self.Threshhold))
