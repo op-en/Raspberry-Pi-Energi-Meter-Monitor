@@ -25,19 +25,19 @@ config = {
 #Functions
 #Time
 def CurrentTime():
-	return strftime("%Y-%m-%d %H:%M:%S", localtime())
+    return strftime("%Y-%m-%d %H:%M:%S", localtime())
 
 
 #Class
 class EnergyLogger(mqtt.Client):
     def __init__(self,pin=config['mqtt_host'],user = config['mqtt_user'], password=config['mqtt_pass'],server = config['mqtt_host'], prefix = config['mqtt_prefix'],client = config['mqtt_client']):
 
-		self.Factor = 0.01 # kWh per pulse
-		self.Threshhold = 10.0 # Dont update if power didnt change more than this amount.
-		self.SentThreshhold = None
+        self.Factor = 0.01 # kWh per pulse
+        self.Threshhold = 10.0 # Dont update if power didnt change more than this amount.
+        self.SentThreshhold = None
 
-		self.LastTime = 0.0
-		self.EnergyCounter = 0
+        self.LastTime = 0.0
+        self.EnergyCounter = 0
         self.PulseCounter = 0
         self.LastPeriod = 0.0
         self.Falling = 0.0
@@ -56,7 +56,7 @@ class EnergyLogger(mqtt.Client):
 
         self.prefix = prefix
 
-		#Init and connect to MQTT server
+        #Init and connect to MQTT server
         mqtt.Client.__init__(self,client)
         self.will_set( topic = "system/" + self.prefix, payload="Offline", qos=1, retain=True)
 
@@ -71,11 +71,11 @@ class EnergyLogger(mqtt.Client):
 
         GPIO.setmode(GPIO.BCM)
 
-		# GPIO self.pin set up as inputs, pulled up to avoid false detection.
+        # GPIO self.pin set up as inputs, pulled up to avoid false detection.
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-		# when a falling or rising edge is detected on port self.pin, call callback2
-		#GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.my_callback2, bouncetime=0)
+        # when a falling or rising edge is detected on port self.pin, call callback2
+        #GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.my_callback2, bouncetime=0)
 
         self.loop_start()
         return
@@ -167,7 +167,7 @@ class EnergyLogger(mqtt.Client):
             return
 
 
-    	#Store for future reference
+        #Store for future reference
         self.LastPower = Power
         self.LastEnergy = Energy
         self.LastDelta = Delta
@@ -180,136 +180,136 @@ class EnergyLogger(mqtt.Client):
 
         return
 
-	#Posting data to couchDB
-	def Update(self,sub_topic,value,timestamp = time()):
+    #Posting data to couchDB
+    def Update(self,sub_topic,value,timestamp = time()):
 
-		topic = self.prefix+"/"+sub_topic
+        topic = self.prefix+"/"+sub_topic
 
-        	msg = json.dumps({"time":timestamp,"value":value})
+            msg = json.dumps({"time":timestamp,"value":value})
 
-		#print "New event: " + topic
-        	self.publish(topic,msg,1)
+        #print "New event: " + topic
+            self.publish(topic,msg,1)
 
-		return
+        return
 
-	def SendMeterEvent(self,timestamp,power,energy,threshhold):
-		#self.Update("power",power,timestamp)
-		#self.Update("counter",counter,timestamp)
+    def SendMeterEvent(self,timestamp,power,energy,threshhold):
+        #self.Update("power",power,timestamp)
+        #self.Update("counter",counter,timestamp)
 
-		topic = self.prefix+"/meterevent"
+        topic = self.prefix+"/meterevent"
 
-		msg = json.dumps({"time":timestamp,"power":power,"energy":energy})
+        msg = json.dumps({"time":timestamp,"power":power,"energy":energy})
 
-		self.publish(topic,msg,1)
-		#if self.SentThreshhold != self.Threshhold:
-		#	self.Update("threshhold",threshhold,timestamp)
-		#	self.SentThreshhold = self.Threshhold
+        self.publish(topic,msg,1)
+        #if self.SentThreshhold != self.Threshhold:
+        #    self.Update("threshhold",threshhold,timestamp)
+        #    self.SentThreshhold = self.Threshhold
 
-		return
+        return
 
-	def SendIOEvent(self,timestamp,Period,Counter,PulseLenght,Bounces,PulseDeviation):
-		topic = self.prefix+"/ioevent"
-		msg = json.dumps({"time":timestamp,"counter":Counter,"period":Period,"pulselenght":PulseLenght,"bounces":Bounces,"pulsedeviation":PulseDeviation})
-		self.publish(topic,msg,1)
-		return
+    def SendIOEvent(self,timestamp,Period,Counter,PulseLenght,Bounces,PulseDeviation):
+        topic = self.prefix+"/ioevent"
+        msg = json.dumps({"time":timestamp,"counter":Counter,"period":Period,"pulselenght":PulseLenght,"bounces":Bounces,"pulsedeviation":PulseDeviation})
+        self.publish(topic,msg,1)
+        return
 
-	def my_callback2(self,channel):
+    def my_callback2(self,channel):
 
-    		TimeStamp = time()
-		#print CurrentTime()
+            TimeStamp = time()
+        #print CurrentTime()
 
-		#Detect high or low
-		if not GPIO.input(channel):
-			self.Falling = TimeStamp
-			print CurrentTime()
-			print "Falling edge on " + str(channel)
-			return
-		else:
-			print "Rising edge on " + str(channel)
+        #Detect high or low
+        if not GPIO.input(channel):
+            self.Falling = TimeStamp
+            print CurrentTime()
+            print "Falling edge on " + str(channel)
+            return
+        else:
+            print "Rising edge on " + str(channel)
 
-		#Check pulse lenght.
-		PulseLenght = TimeStamp - self.Falling
-		PulseDeviation = fabs(PulseLenght - self.pulse_lenght)
+        #Check pulse lenght.
+        PulseLenght = TimeStamp - self.Falling
+        PulseDeviation = fabs(PulseLenght - self.pulse_lenght)
 
-		print "Pulse lengt on port %i was %.2fms\na deviation of %.3fms from expected %.2fms" %(self.pin,PulseLenght*1000,PulseDeviation *1000,self.pulse_lenght *1000)
-
-
-
-		if PulseDeviation >  self.pulse_lenght_max_dev:
-			print "Pulselenght error"
-			return
+        print "Pulse lengt on port %i was %.2fms\na deviation of %.3fms from expected %.2fms" %(self.pin,PulseLenght*1000,PulseDeviation *1000,self.pulse_lenght *1000)
 
 
-		if self.LastTime == 0:
-			self.LastTime = TimeStamp
-			return
 
-		Period = TimeStamp - self.LastTime
-
-		#Debounce function
-		#if Period < 1.0:
-		#	return
-
-		self.Counter += 1
-
-		self.LastTime = TimeStamp
-		self.LastPeriod = Period
-
-    		#Calculate values.
-    		Energy = self.Counter * self.Factor
-    		Power = self.Factor / (Period / 3600000.0) # The energy divided on the time in hours.
-    		Delta = fabs(Power - self.LastPower)
-
-		print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
-		print " "
-
-		if Delta > self.error_threshhold:
-			print "Interference detected"
-			print " "
-			return
+        if PulseDeviation >  self.pulse_lenght_max_dev:
+            print "Pulselenght error"
+            return
 
 
-		#Store for future reference
-		self.LastPower = Power
-		self.LastEnergy = Energy
-		self.LastDelta = Delta
+        if self.LastTime == 0:
+            self.LastTime = TimeStamp
+            return
+
+        Period = TimeStamp - self.LastTime
+
+        #Debounce function
+        #if Period < 1.0:
+        #    return
+
+        self.Counter += 1
+
+        self.LastTime = TimeStamp
+        self.LastPeriod = Period
+
+            #Calculate values.
+            Energy = self.Counter * self.Factor
+            Power = self.Factor / (Period / 3600000.0) # The energy divided on the time in hours.
+            Delta = fabs(Power - self.LastPower)
+
+        print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
+        print " "
+
+        if Delta > self.error_threshhold:
+            print "Interference detected"
+            print " "
+            return
 
 
-		print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
+        #Store for future reference
+        self.LastPower = Power
+        self.LastEnergy = Energy
+        self.LastDelta = Delta
 
-		if Delta > self.Threshhold:
-			print "Updating..."
 
-			self.SendMeterEvent(str(TimeStamp),str(Power),str(Energy),str(self.Threshhold))
-			self.SendIOEvent(str(TimeStamp),str(Period),str(self.Counter),str(PulseLenght))
-		return
+        print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
 
-	def mqtt_on_connect(self, selfX,mosq, result):
-    		print "MQTT connected!"
-    		self.subscribe(self.prefix + "/#", 0)
+        if Delta > self.Threshhold:
+            print "Updating..."
 
-  	def mqtt_on_message(self, selfX,mosq, msg):
-    		print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
+            self.SendMeterEvent(str(TimeStamp),str(Power),str(Energy),str(self.Threshhold))
+            self.SendIOEvent(str(TimeStamp),str(Period),str(self.Counter),str(PulseLenght))
+        return
 
-    		return
+    def mqtt_on_connect(self, selfX,mosq, result):
+            print "MQTT connected!"
+            self.subscribe(self.prefix + "/#", 0)
+
+      def mqtt_on_message(self, selfX,mosq, msg):
+            print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
+
+            return
 
 
 if __name__ == "__main__":
 
 
-	#raw_input("Press Enter when ready\n>")
+    #raw_input("Press Enter when ready\n>")
 
-	Logger = EnergyLogger()
+    Logger = EnergyLogger()
 
-	try:
-		while(1):
-			raw_input("Press Enter to simulate pulse\n>")
-			Logger.my_callback(1)
+    try:
+        while(1):
+            raw_input("Press Enter to simulate pulse\n>")
+            Logger.my_callback(1)
 
-    		print "Waiting for rising edge on port 24"
-    		GPIO.wait_for_edge(24, GPIO.RISING)
-    		print "Rising edge detected on port 24. Here endeth the third lesson."
+            print "Waiting for rising edge on port 24"
+            GPIO.wait_for_edge(24, GPIO.RISING)
+            print "Rising edge detected on port 24. Here endeth the third lesson."
 
-	except KeyboardInterrupt:
-    		GPIO.cleanup()       # clean up GPIO on CTRL+C exit
-	GPIO.cleanup()           # clean up GPIO on normal exit
+    except KeyboardInterrupt:
+            GPIO.cleanup()       # clean up GPIO on CTRL+C exit
+    GPIO.cleanup()           # clean up GPIO on normal exit
