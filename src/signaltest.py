@@ -11,6 +11,8 @@ while (1):
     if input != oldinput:
         now = time.time()
         delta = now - oldtime
+        if delta > 0.020:
+            print(" ")
         print(count, input, now, delta*1000)
         oldtime = now
         oldinput = input
