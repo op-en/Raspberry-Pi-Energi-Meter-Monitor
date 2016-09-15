@@ -8,7 +8,7 @@ count=0
 oldtime = 0
 edges = []
 
-timeout = 0
+timeout = 10000
 
 while True:
     res = GPIO.wait_for_edge(23,GPIO.BOTH,timeout=timeout)
@@ -21,7 +21,7 @@ while True:
         continue
 
     if len(edges) == 0:
-        timeout = 0
+        timeout = 10000
         continue
 
     delta = edges[-1] - edges[0]
