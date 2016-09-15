@@ -20,7 +20,13 @@ config = {
     'mqtt_prefix': os.environ.get('MQTT_PREFIX','rpi-emm'),
     'mqtt_client': os.environ.get('MQTT_CLIENT','EnergyLogger'),
     'pin': int(os.environ.get('EMM_GPIO_PIN',23)),
-    'factor': float(os.environ.get('EMM_PULSE_FACTOR',10))
+    'factor': float(os.environ.get('EMM_PULSE_FACTOR',10)),
+    'pulselenght': float(os.environ.get('EMM_PULSE_LEN','NaN')),
+    'pulse_lenght_max_dev': float(os.environ.get('EMM_MAX_PULSE_LEN_DEV',0.005)),
+    'debug': float(os.environ.get('EMM_DEBUG',False))
+
+
+
 }
 
 
@@ -32,7 +38,9 @@ def CurrentTime():
 
 #Class
 class EnergyLogger(mqtt.Client):
-    def __init__(self,pin=config['pin'],user = config['mqtt_user'], password=config['mqtt_pass'],server = config['mqtt_host'], prefix = config['mqtt_prefix'],client = config['mqtt_client'],factor = config['factor']):
+    def __init__(self,pin=config['pin'],user = config['mqtt_user'], password=config['mqtt_pass'],server = config['mqtt_host'], prefix = config['mqtt_prefix'],client = config['mqtt_client'],
+                        factor = config['factor'],debug = config['debug'],pulselenght = config['pulselenght'],
+                        pulse_lenght_max_dev = config['pulse_lenght_max_dev']):
 
         self.Factor = factor # kWh per pulse
         self.Threshhold = 10.0 # Dont update if power didnt change more than this amount.
@@ -47,14 +55,19 @@ class EnergyLogger(mqtt.Client):
 
         self.error_threshhold = 100000
 
-        self.pulse_lenght = 0.080
-        self.pulse_lenght_max_dev = 0.005
+        if pulselenght == float("NaN"):
+            self.pulse_lenght = 0.080
+            self.auto_pulselenght = True
+        else
+            self.pulse_lenght = pulselenght
+
+        self.pulse_lenght_max_dev = pulse_lenght_max_dev
         self.pulse_lenght_buf = []
-        self.auto_pulselenght = True
+
 
         self.pin = pin
 
-        self.debug = True
+        self.debug = debug
 
         self.prefix = prefix
 
@@ -92,6 +105,7 @@ class EnergyLogger(mqtt.Client):
 
         print "CONFIG:"
         print config
+        print "_________________________________"
 
         oldtime = 0
         edges = []
@@ -136,7 +150,7 @@ class EnergyLogger(mqtt.Client):
                 self.pulse_lenght_buf.append(pulselenght)
                 self.pulse_lenght_buf=self.pulse_lenght_buf[-100:]
                 self.pulse_lenght = sum(self.pulse_lenght_buf)/len(self.pulse_lenght_buf)
-                print self.pulse_lenght, self.pulse_lenght_buf
+                #print self.pulse_lenght, self.pulse_lenght_buf
 
             #Check pulse lenght.
             PulseDeviation = fabs(pulselenght - self.pulse_lenght)
@@ -144,7 +158,7 @@ class EnergyLogger(mqtt.Client):
             self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.5f" % PulseDeviation)
 
             if self.debug:
-                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,self.PulseCounter, pulselenght, bounces ,period,PulseDeviation))
+                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.5f" % (timestamp, self.pin,self.PulseCounter, pulselenght, bounces ,period,PulseDeviation))
 
             self.CountEnergy(timestamp,pulselenght,bounces,PulseDeviation)
 
@@ -157,7 +171,8 @@ class EnergyLogger(mqtt.Client):
 
         #Proceed only id pulse legnth is correct.
         if PulseDeviation >  self.pulse_lenght_max_dev:
-            print("%.3f Pulselenght error" % TimeStamp)
+            print("%.3f \tINFO: Skipping pulse due to pulse length deviation. Adjust EMM_MAX_PULSE_LEN_DEV if nesseary." % TimeStamp)
+            print("\tPulse length: %.3f \tTarget pulse lenght: %.3f\t Deviation: %.5f Max deviation threshhold: %.5f" %(PulseLenght,self.pulse_lenght,PulseDeviation,pulse_lenght_max_dev))
             return
 
         #Increase counter and calculate period.
@@ -173,7 +188,7 @@ class EnergyLogger(mqtt.Client):
 
         #Filter exream values
         if Delta > self.error_threshhold:
-            print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (TimeStamp, self.error_threshhold)
+            print "%.3f INFO: Skipping pulse due to that the resulting power value exceeds the error threshhold of %.0f W " % (TimeStamp, self.error_threshhold)
             print " "
             return
 
@@ -225,11 +240,13 @@ class EnergyLogger(mqtt.Client):
         return
 
     def mqtt_on_connect(self, client, userdata, flags, rc):
-        print "MQTT connected!"
+        print "INFO: MQTT connected!"
         self.subscribe(self.prefix + "/#", 0)
 
     def mqtt_on_message(self, client, userdata, msg):
-        print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
+        if debug:
+            print("INFO: RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
+
         return
 
 
