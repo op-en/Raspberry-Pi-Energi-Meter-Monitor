@@ -26,6 +26,7 @@ while True:
 
     delta = edges[-1] - edges[0]
     count += 1
+    edges=[]
     print(count, delta)
 
 
