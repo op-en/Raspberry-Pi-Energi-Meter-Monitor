@@ -8,6 +8,8 @@ count=0
 oldtime = 0
 edges = []
 
+timeout = None
+
 while True:
     res = GPIO.wait_for_edge(23,GPIO.BOTH,timeout=timeout)
 
