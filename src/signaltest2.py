@@ -6,11 +6,13 @@ oldinput = False
 count=0
 oldtime = 0
 
-GPIO.add_event_detect(23, GPIO.BOTH, callback=my_callback2, bouncetime=0)
+
 
 def my_callback2(level):
     print("Event: ",level,time.time())
     return
+
+GPIO.add_event_detect(23, GPIO.BOTH, callback=my_callback2, bouncetime=0)
 
 while True:
     input = GPIO.input(23)
