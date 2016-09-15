@@ -23,6 +23,7 @@ config = {
     'factor': float(os.environ.get('EMM_PULSE_FACTOR',10))
 }
 
+
 #Functions
 #Time
 def CurrentTime():
@@ -87,7 +88,10 @@ class EnergyLogger(mqtt.Client):
 
         print("<---Starting pulse detection--->")
         print("Time: %.2f" % time())
-        print("Factor: %f" % self.Factor)
+        #print("Factor: %f" % self.Factor)
+
+        print "CONFIG:"
+        print config
 
         oldtime = 0
         edges = []
@@ -137,7 +141,7 @@ class EnergyLogger(mqtt.Client):
             #Check pulse lenght.
             PulseDeviation = fabs(pulselenght - self.pulse_lenght)
 
-            self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.3f" % PulseDeviation)
+            self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.5f" % PulseDeviation)
 
             if self.debug:
                 print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,self.PulseCounter, pulselenght, bounces ,period,PulseDeviation))
