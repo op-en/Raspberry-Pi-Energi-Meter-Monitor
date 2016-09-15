@@ -185,10 +185,10 @@ class EnergyLogger(mqtt.Client):
 
         topic = self.prefix+"/"+sub_topic
 
-            msg = json.dumps({"time":timestamp,"value":value})
+        msg = json.dumps({"time":timestamp,"value":value})
 
         #print "New event: " + topic
-            self.publish(topic,msg,1)
+        self.publish(topic,msg,1)
 
         return
 
