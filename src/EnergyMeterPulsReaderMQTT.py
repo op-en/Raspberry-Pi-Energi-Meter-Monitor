@@ -30,8 +30,7 @@ def CurrentTime():
 
 #Class
 class EnergyLogger(mqtt.Client):
-
-	def __init__(self,pin=config['mqtt_host'],user = config['mqtt_user'], password=config['mqtt_pass'],server = config['mqtt_host'], prefix = config['mqtt_prefix'],client = config['mqtt_client']):
+    def __init__(self,pin=config['mqtt_host'],user = config['mqtt_user'], password=config['mqtt_pass'],server = config['mqtt_host'], prefix = config['mqtt_prefix'],client = config['mqtt_client']):
 
 		self.Factor = 0.01 # kWh per pulse
 		self.Threshhold = 10.0 # Dont update if power didnt change more than this amount.
@@ -81,7 +80,7 @@ class EnergyLogger(mqtt.Client):
         self.loop_start()
         return
 
-    def StartDetection():
+    def StartDetection(self):
         count=0
         oldtime = 0
         edges = []
