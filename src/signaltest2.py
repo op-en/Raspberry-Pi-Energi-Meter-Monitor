@@ -9,10 +9,25 @@ oldtime = 0
 
 
 def my_callback2(level):
-    print("Event: ",level,time.time())
+    
+    input = level
+    if input != oldinput:
+        now = time.time()
+        delta = now - oldtime
+        if delta > 0.020:
+            print(" ")
+        print(count, input, now, delta*1000)
+        oldtime = now
+        oldinput = input
+        count += 1
+
+
     return
 
 GPIO.add_event_detect(23, GPIO.BOTH, callback=my_callback2)
+
+while True:
+    time.sleep(1000)
 
 while True:
     input = GPIO.input(23)
