@@ -79,8 +79,7 @@ class EnergyLogger(mqtt.Client):
 		#GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.my_callback2, bouncetime=0)
 
         self.loop_start()
-
-		return
+        return
 
     def StartDetection():
         count=0
