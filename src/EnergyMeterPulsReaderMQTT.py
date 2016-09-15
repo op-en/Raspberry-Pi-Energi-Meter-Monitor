@@ -91,7 +91,7 @@ class EnergyLogger(mqtt.Client):
         while True:
             res = GPIO.wait_for_edge(23,GPIO.BOTH,timeout=timeout)
 
-            now = time.time()
+            now = time()
 
             if res != None:
                 edges.append(now)
@@ -214,11 +214,11 @@ class EnergyLogger(mqtt.Client):
         self.publish(topic,msg,1)
         return
 
-    def mqtt_on_connect(self, selfX,mosq, result):
+    def mqtt_on_connect(self, client, userdata, flags, rc):
         print "MQTT connected!"
         self.subscribe(self.prefix + "/#", 0)
 
-    def mqtt_on_message(self, selfX,mosq, msg):
+    def mqtt_on_message(self, client, userdata, msg):
         print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
         return
 
