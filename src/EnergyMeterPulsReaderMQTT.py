@@ -10,6 +10,7 @@ import urllib2
 import base64
 from math import fabs
 import paho.mqtt.client as mqtt
+import os
 
 
 config = {
