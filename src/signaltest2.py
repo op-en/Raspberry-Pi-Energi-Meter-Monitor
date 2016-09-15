@@ -34,10 +34,12 @@ while True:
     period = edges[-1] - oldtime
     oldtime = edges[-1]
 
+    print("Count: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f" % (count, pulselenght, len(edges),period) )
+
     #Clear databuffer.
     edges=[]
 
-    print(count, pulselenght, len(edges),period )
+
 
 
 def my_callback2(level):
