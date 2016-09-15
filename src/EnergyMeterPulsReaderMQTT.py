@@ -8,7 +8,7 @@ from time import gmtime, strftime, time, localtime, mktime, strptime
 import json
 import urllib2
 import base64
-from math import fabs
+from math import fabs, isnan
 import paho.mqtt.client as mqtt
 import os
 
@@ -55,11 +55,12 @@ class EnergyLogger(mqtt.Client):
 
         self.error_threshhold = 100000
 
-        if pulselenght == float("NaN"):
+        if isnan(pulselenght):
             self.pulse_lenght = 0.080
             self.auto_pulselenght = True
         else:
             self.pulse_lenght = pulselenght
+            self.auto_pulselenght = False
 
         self.pulse_lenght_max_dev = pulse_lenght_max_dev
         self.pulse_lenght_buf = []
