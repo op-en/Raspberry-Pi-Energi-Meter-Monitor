@@ -24,10 +24,20 @@ while True:
         timeout = 10000
         continue
 
-    delta = edges[-1] - edges[0]
+    #Calculate pulse length and increase count
+    pulselenght = edges[-1] - edges[0]
+
+    #Condition
     count += 1
+
+    #Calculate period
+    period = edges[-1] - oldtime
+    oldtime = edges[-1]
+
+    #Clear databuffer.
     edges=[]
-    print(count, delta)
+
+    print(count, pulselenght, len(edges),period )
 
 
 def my_callback2(level):
