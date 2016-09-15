@@ -6,7 +6,25 @@ GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 oldinput = False
 count=0
 oldtime = 0
+edges = []
 
+while True:
+    res = GPIO.wait_for_edge(23,GPIO.BOTH,timeout=timeout)
+
+    now = time.time()
+
+    if res != None:
+        edges.append(now)
+        timeout = 20
+        continue
+
+    if len(edges) == 0:
+        timeout = None
+        continue
+
+    delta = edges[-1] - edges[0]
+    count += 1
+    print(count, delta)
 
 
 def my_callback2(level):
@@ -27,7 +45,7 @@ def my_callback2(level):
 
     return
 
-GPIO.add_event_detect(23, GPIO.BOTH, callback=my_callback2)
+#GPIO.add_event_detect(23, GPIO.BOTH, callback=my_callback2)
 
 while True:
     time.sleep(1000)
