@@ -164,12 +164,12 @@ class EnergyLogger(mqtt.Client):
 
         #Calculate power and energy values.
         Energy = self.EnergyCounter * self.Factor
-        Power = self.Factor / (Period / 3600000.0) # The energy divided on the time in hours.
+        Power = self.Factor / (Period / 3600.0) # The energy divided on the time in hours.
         Delta = fabs(Power - self.LastPower)
 
         #Filter exream values
         if Delta > self.error_threshhold:
-            print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (timestamp, self.error_threshhold)
+            print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (TimeStamp, self.error_threshhold)
             print " "
             return
 
