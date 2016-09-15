@@ -134,7 +134,7 @@ class EnergyLogger(mqtt.Client):
 
             self.CountEnergy(timestamp,pulselenght,bounces)
 
-    def CountEnergy(self,TimeStamp,PulseLenght,Bounces )
+    def CountEnergy(self,TimeStamp,PulseLenght,Bounces):
 
 
         if self.LastTime == 0:
