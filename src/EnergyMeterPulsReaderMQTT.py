@@ -126,7 +126,7 @@ class EnergyLogger(mqtt.Client):
                 self.pulse_lenght = sum(self.pulse_lenght_buf)/len(self.pulse_lenght_buf)
 
             #Check pulse lenght.
-    		PulseDeviation = fabs(pulselenght - self.pulse_lenght)
+            PulseDeviation = fabs(pulselenght - self.pulse_lenght)
 
             self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.3f" % PulseDeviation)
 
@@ -138,23 +138,23 @@ class EnergyLogger(mqtt.Client):
     def CountEnergy(self,TimeStamp,PulseLenght,Bounces )
 
 
-    	if self.LastTime == 0:
-    		self.LastTime = TimeStamp
-    		return
+        if self.LastTime == 0:
+            self.LastTime = TimeStamp
+            return
 
         Period = TimeStamp - self.LastTime
 
 
-            #
-    	if PulseDeviation >  self.pulse_lenght_max_dev:
-			print("%.3f Pulselenght error" % TimeStamp)
+        #
+        if PulseDeviation >  self.pulse_lenght_max_dev:
+            print("%.3f Pulselenght error" % TimeStamp)
             return
 
 
-    	self.EnergyCounter += 1
+        self.EnergyCounter += 1
 
-    	self.LastTime = TimeStamp
-    	self.LastPeriod = Period
+        self.LastTime = TimeStamp
+        self.LastPeriod = Period
 
         #Calculate values.
         Energy = self.Counter * self.Factor
@@ -162,22 +162,22 @@ class EnergyLogger(mqtt.Client):
         Delta = fabs(Power - self.LastPower)
 
 
-    	if Delta > self.error_threshhold:
-    		print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (timestamp, self.error_threshhold)
-    		print " "
-    		return
+        if Delta > self.error_threshhold:
+            print "%.3f Error: The power value exceeds the error threshhold of %.0f W " % (timestamp, self.error_threshhold)
+            print " "
+            return
 
 
     	#Store for future reference
-    	self.LastPower = Power
-    	self.LastEnergy = Energy
-    	self.LastDelta = Delta
+        self.LastPower = Power
+        self.LastEnergy = Energy
+        self.LastDelta = Delta
 
         if self.debug:
-    	     print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
+            print "Period is: %.2f s \nPower is: %.2f W\nEnergy: %.2f kWh\nChange: %.2f " % (Period,Power,Energy,Delta)
 
-    	if Delta > self.Threshhold:
-    		 self.SendMeterEvent(str(TimeStamp),str(Power),str(Energy),str(self.Threshhold))
+        if Delta > self.Threshhold:
+            self.SendMeterEvent(str(TimeStamp),str(Power),str(Energy),str(self.Threshhold))
 
         return
 
