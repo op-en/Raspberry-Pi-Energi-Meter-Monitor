@@ -214,13 +214,12 @@ class EnergyLogger(mqtt.Client):
         return
 
     def mqtt_on_connect(self, selfX,mosq, result):
-            print "MQTT connected!"
-            self.subscribe(self.prefix + "/#", 0)
+        print "MQTT connected!"
+        self.subscribe(self.prefix + "/#", 0)
 
-      def mqtt_on_message(self, selfX,mosq, msg):
-            print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
-
-            return
+    def mqtt_on_message(self, selfX,mosq, msg):
+        print("RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
+        return
 
 
 if __name__ == "__main__":
