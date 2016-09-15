@@ -11,6 +11,7 @@ import base64
 from math import fabs, isnan
 import paho.mqtt.client as mqtt
 import os
+import json
 
 
 config = {
@@ -24,8 +25,6 @@ config = {
     'pulselenght': float(os.environ.get('EMM_PULSE_LEN','NaN')),
     'pulse_lenght_max_dev': float(os.environ.get('EMM_MAX_PULSE_LEN_DEV',0.005)),
     'debug': float(os.environ.get('EMM_DEBUG',False))
-
-
 
 }
 
@@ -99,14 +98,16 @@ class EnergyLogger(mqtt.Client):
         return
 
     def StartDetection(self):
-
-        print("<---Starting pulse detection--->")
+        print(" ")
+        print("Starting pulse detection")
+        print("________________________________")
         print("Time: %.2f" % time())
         #print("Factor: %f" % self.Factor)
 
-        print "CONFIG:"
-        print config
-        print "_________________________________"
+        print("CONFIG:")
+
+        print(json.dumps(x, indent=2))
+        print("_________________________________")
 
         oldtime = 0
         edges = []
@@ -245,7 +246,7 @@ class EnergyLogger(mqtt.Client):
         self.subscribe(self.prefix + "/#", 0)
 
     def mqtt_on_message(self, client, userdata, msg):
-        if debug:
+        if self.debug:
             print("INFO: RECIEVED MQTT MESSAGE: "+msg.topic + " " + str(msg.payload))
 
         return
