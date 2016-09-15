@@ -95,7 +95,9 @@ class EnergyLogger(mqtt.Client):
 
             if res != None:
                 edges.append(now)
-                timeout = self.pulse_lenght
+                timeout = int (self.pulse_lenght * 1000)
+                if timeout < 20:
+                    timeout = 20
                 continue
 
             if len(edges) == 0:
