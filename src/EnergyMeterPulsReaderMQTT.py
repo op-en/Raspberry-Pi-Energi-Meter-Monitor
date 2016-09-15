@@ -57,6 +57,8 @@ class EnergyLogger(mqtt.Client):
 
         self.prefix = prefix
 
+
+
         #Init and connect to MQTT server
         mqtt.Client.__init__(self,client)
         self.will_set( topic = "system/" + self.prefix, payload="Offline", qos=1, retain=True)
@@ -82,7 +84,11 @@ class EnergyLogger(mqtt.Client):
         return
 
     def StartDetection(self):
-        count=0
+
+        print("<---Starting pulse detection--->")
+        print("Time: %.2f" % time())
+        print("Factor: %f" % self.Factor)
+        
         oldtime = 0
         edges = []
 
@@ -133,7 +139,7 @@ class EnergyLogger(mqtt.Client):
             self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.3f" % PulseDeviation)
 
             if self.debug:
-                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,count, pulselenght, bounces ,period,PulseDeviation))
+                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,self.PulseCounter, pulselenght, bounces ,period,PulseDeviation))
 
             self.CountEnergy(timestamp,pulselenght,bounces,PulseDeviation)
 
