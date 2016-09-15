@@ -14,4 +14,4 @@ while (1):
         print(count, input, now, delta)
         oldtime = now
         oldinput = input
-        count =+ 1
+        count += 1
