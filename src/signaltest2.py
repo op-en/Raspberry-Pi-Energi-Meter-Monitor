@@ -13,7 +13,7 @@ def my_callback2(level):
 
     global oldinput,count,oldtime
 
-    input = level
+    input = GPIO.input(23)
     #if input != oldinput:
     now = time.time()
     delta = now - oldtime
