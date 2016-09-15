@@ -98,16 +98,6 @@ class EnergyLogger(mqtt.Client):
         return
 
     def StartDetection(self):
-        print(" ")
-        print("Starting pulse detection")
-        print("________________________________")
-        print("Time: %.2f" % time())
-        #print("Factor: %f" % self.Factor)
-
-        print("CONFIG:")
-
-        print(json.dumps(x, indent=2))
-        print("_________________________________")
 
         oldtime = 0
         edges = []
@@ -174,7 +164,7 @@ class EnergyLogger(mqtt.Client):
         #Proceed only id pulse legnth is correct.
         if PulseDeviation >  self.pulse_lenght_max_dev:
             print("%.3f \tINFO: Skipping pulse due to pulse length deviation. Adjust EMM_MAX_PULSE_LEN_DEV if nesseary." % TimeStamp)
-            print("\tPulse length: %.3f \tTarget pulse lenght: %.3f\t Deviation: %.5f Max deviation threshhold: %.5f" %(PulseLenght,self.pulse_lenght,PulseDeviation,pulse_lenght_max_dev))
+            print("\tPulse length: %.3f \tTarget pulse lenght: %.3f\t Deviation: %.5f Max deviation threshhold: %.5f" %(PulseLenght,self.pulse_lenght,PulseDeviation,self.pulse_lenght_max_dev))
             return
 
         #Increase counter and calculate period.
@@ -257,8 +247,19 @@ if __name__ == "__main__":
 
     #raw_input("Press Enter when ready\n>")
 
-    Logger = EnergyLogger()
 
+    print("_________________________________")
+    print("Starting pulse detection")
+    print("_________________________________")
+    print("Time: %.2f" % time())
+        #print("Factor: %f" % self.Factor)
+
+    print("CONFIG:")
+
+    print(json.dumps(config, indent=2))
+    print("_________________________________")
+
+    Logger = EnergyLogger()
     Logger.StartDetection()
 
     # try:
