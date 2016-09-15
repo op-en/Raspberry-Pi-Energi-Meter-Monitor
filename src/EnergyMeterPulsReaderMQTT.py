@@ -20,7 +20,7 @@ config = {
     'mqtt_prefix': os.environ.get('MQTT_PREFIX','rpi-emm'),
     'mqtt_client': os.environ.get('MQTT_CLIENT','EnergyLogger'),
     'pin': int(os.environ.get('EMM_GPIO_PIN',23)),
-    'factor': int(os.environ.get('EMM_PULSE_FACTOR',0.01))
+    'factor': float(os.environ.get('EMM_PULSE_FACTOR',10))
 }
 
 #Functions
@@ -88,7 +88,7 @@ class EnergyLogger(mqtt.Client):
         print("<---Starting pulse detection--->")
         print("Time: %.2f" % time())
         print("Factor: %f" % self.Factor)
-        
+
         oldtime = 0
         edges = []
 
@@ -132,6 +132,7 @@ class EnergyLogger(mqtt.Client):
                 self.pulse_lenght_buf.append(pulselenght)
                 self.pulse_lenght_buf=self.pulse_lenght_buf[-100:]
                 self.pulse_lenght = sum(self.pulse_lenght_buf)/len(self.pulse_lenght_buf)
+                print self.pulse_lenght, self.pulse_lenght_buf
 
             #Check pulse lenght.
             PulseDeviation = fabs(pulselenght - self.pulse_lenght)
