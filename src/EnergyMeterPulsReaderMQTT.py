@@ -39,7 +39,7 @@ class EnergyLogger(mqtt.Client):
 
 		self.LastTime = 0.0
 		self.EnergyCounter = 0
-        self.PulseCounter
+        self.PulseCounter = 0
 		self.LastPeriod = 0.0
 		self.Falling = 0.0
 		self.LastPower = 0.0
