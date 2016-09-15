@@ -58,7 +58,7 @@ class EnergyLogger(mqtt.Client):
         if pulselenght == float("NaN"):
             self.pulse_lenght = 0.080
             self.auto_pulselenght = True
-        else
+        else:
             self.pulse_lenght = pulselenght
 
         self.pulse_lenght_max_dev = pulse_lenght_max_dev
