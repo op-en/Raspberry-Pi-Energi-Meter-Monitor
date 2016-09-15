@@ -159,7 +159,7 @@ class EnergyLogger(mqtt.Client):
         self.LastPeriod = Period
 
         #Calculate values.
-        Energy = self.Counter * self.Factor
+        Energy = self.EnergyCounter * self.Factor
         Power = self.Factor / (Period / 3600000.0) # The energy divided on the time in hours.
         Delta = fabs(Power - self.LastPower)
 
