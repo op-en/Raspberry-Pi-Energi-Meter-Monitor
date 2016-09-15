@@ -41,44 +41,44 @@ class EnergyLogger(mqtt.Client):
 		self.EnergyCounter = 0
         self.PulseCounter = 0
         self.LastPeriod = 0.0
-		self.Falling = 0.0
-		self.LastPower = 0.0
+        self.Falling = 0.0
+        self.LastPower = 0.0
 
-		self.error_threshhold = 100000
+        self.error_threshhold = 100000
 
-		self.pulse_lenght = 0.080
-		self.pulse_lenght_max_dev = 0.005
+        self.pulse_lenght = 0.080
+        self.pulse_lenght_max_dev = 0.005
         self.pulse_lenght_buf = []
         self.auto_pulselenght = True
 
-		self.pin = pin
+        self.pin = pin
 
         self.debug = True
 
-		self.prefix = prefix
+        self.prefix = prefix
 
 		#Init and connect to MQTT server
-		mqtt.Client.__init__(self,client)
-		self.will_set( topic = "system/" + self.prefix, payload="Offline", qos=1, retain=True)
+        mqtt.Client.__init__(self,client)
+        self.will_set( topic = "system/" + self.prefix, payload="Offline", qos=1, retain=True)
 
-		if user != None:
-    			self.username_pw_set(user,password)
+        if user != None:
+            self.username_pw_set(user,password)
 
-    		self.on_connect = self.mqtt_on_connect
-    		self.on_message = self.mqtt_on_message
+        self.on_connect = self.mqtt_on_connect
+        self.on_message = self.mqtt_on_message
 
-		self.connect(server,keepalive=10)
-		self.publish(topic = "system/"+ self.prefix, payload="Online", qos=1, retain=True)
+        self.connect(server,keepalive=10)
+        self.publish(topic = "system/"+ self.prefix, payload="Online", qos=1, retain=True)
 
-		GPIO.setmode(GPIO.BCM)
+        GPIO.setmode(GPIO.BCM)
 
 		# GPIO self.pin set up as inputs, pulled up to avoid false detection.
-		GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 		# when a falling or rising edge is detected on port self.pin, call callback2
 		#GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=self.my_callback2, bouncetime=0)
 
-		self.loop_start()
+        self.loop_start()
 
 		return
 
