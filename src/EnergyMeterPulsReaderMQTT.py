@@ -130,7 +130,7 @@ class EnergyLogger(mqtt.Client):
             self.SendIOEvent(str("%.3f" % timestamp),"%.2f" % period,str(self.PulseCounter),"%.3f" % pulselenght,str(bounces),"%.3f" % PulseDeviation)
 
             if self.debug:
-                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,count, pulselenght, bounces ,period,PulseDeviation)
+                print("%.2f Pin: %i \tCount: %i \tPulse lenght: %.3f Bounces: %i \tPeriod: %.3f \tPulseDeviation: %.3f" % (timestamp, self.pin,count, pulselenght, bounces ,period,PulseDeviation))
 
             self.CountEnergy(timestamp,pulselenght,bounces)
 
@@ -301,15 +301,17 @@ if __name__ == "__main__":
 
     Logger = EnergyLogger()
 
-    try:
-        while(1):
-            raw_input("Press Enter to simulate pulse\n>")
-            Logger.my_callback(1)
+    Logger.StartDetection()
 
-            print "Waiting for rising edge on port 24"
-            GPIO.wait_for_edge(24, GPIO.RISING)
-            print "Rising edge detected on port 24. Here endeth the third lesson."
-
-    except KeyboardInterrupt:
-            GPIO.cleanup()       # clean up GPIO on CTRL+C exit
+    # try:
+    #     while(1):
+    #         raw_input("Press Enter to simulate pulse\n>")
+    #         Logger.my_callback(1)
+    #
+    #         print "Waiting for rising edge on port 24"
+    #         GPIO.wait_for_edge(24, GPIO.RISING)
+    #         print "Rising edge detected on port 24. Here endeth the third lesson."
+    #
+    # except KeyboardInterrupt:
+    #         GPIO.cleanup()       # clean up GPIO on CTRL+C exit
     GPIO.cleanup()           # clean up GPIO on normal exit
